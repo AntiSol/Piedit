@@ -128,7 +128,7 @@ class Handlers(object):
         self.run_mode = "Debug"
         self.set_run_menu(running=True,status="Debugging...",debug=True)
         self._ui.interpreter = piedit.interpreter.Interpreter()
-        self._ui.interpreter.debug.DEBUG = True
+        self._ui.interpreter.debug.doit = True
         self._ui.interpreter.run_program(pixels=self._ui.pixels,width=self._ui.width,height=self._ui.height,start=False)
         self._ui.highlight_pixel(0,0)
     
@@ -142,14 +142,15 @@ class Handlers(object):
         if self.run_mode == "Run":
             self.interpreter_thread.stop()
         elif self.run_mode == "Debug":
-            self.thread_end_callback(self._ui.interpreter.debug.DEBUG)
+            self.thread_end_callback(self._ui.interpreter.debug.doit)
         
     def set_run_menu(self,running,status,debug=False):
         if running:
             self._ui.gladeui.get_widget("runRunMenuItem").set_sensitive(False)
             self._ui.gladeui.get_widget("runDebugMenuItem").set_sensitive(False)
             self._ui.gladeui.get_widget("runStopMenuItem").set_sensitive(True)
-            self._ui.gladeui.get_widget("runStepMenuItem").set_sensitive(debug)
+            step=self._ui.gladeui.get_widget("runStepMenuItem")
+            step.set_sensitive(debug)
             
             self._ui.gladeui.get_widget("toolbarRun").set_sensitive(False)
             self._ui.gladeui.get_widget("toolbarDebug").set_sensitive(False)
@@ -241,10 +242,11 @@ class UI(object):
         self.selected_color = None
         self.current_file = None
         self.gladeui = gladeui
+        #print("%s" % gladeui.get_widget("mainApp"))
         self.selected_color_widget = None
         
-        self.default_height = 10
-        self.default_width = 10
+        self.default_height = 24
+        self.default_width = 75
         self.width = self.default_width
         self.height = self.default_height
         self.max_width = 1000
@@ -254,6 +256,12 @@ class UI(object):
         self.handlers = Handlers(self)
         self.gladeui.signal_autoconnect(self.handlers)
         self.message_handler = MessageHandler(self)
+        step=self.gladeui.get_widget("runStepMenuItem")
+        key, mod = gtk.accelerator_parse("F5")
+        agr=gtk.AccelGroup()
+        step.add_accelerator("activate", agr, key, mod, gtk.ACCEL_VISIBLE)
+        self.gladeui.get_widget("mainApp").add_accel_group(agr)
+        #step.set_sensitive(debug)
         self.initialise_ui()
 
     def save_image(self,path):
