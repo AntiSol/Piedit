@@ -6,10 +6,10 @@ imported and used by the GUI."""
 import sys
 import getopt
 import PIL.Image
-import colors
-import unionfind
-import getchr
-import debug
+from . import colors
+from . import unionfind
+from . import getchr
+from . import debug
 
 __author__ = "Steven Anderson"
 __copyright__ = "Steven Anderson 2008"
@@ -75,7 +75,7 @@ class Interpreter(object):
         if pixels != None:
             self.width = width
             self.height = height
-            self.pixels = [[Pixel(x,y,pixels[y*(self.width)+x]) for y in xrange(self.height)] for x in xrange(self.width)]
+            self.pixels = [[Pixel(x,y,pixels[y*(self.width)+x]) for y in range(self.height)] for x in range(self.width)]
             self.current_pixel = self.pixels[0][0]
         else:
             self.load_image(path)   
@@ -99,19 +99,19 @@ class Interpreter(object):
             if self.image.mode != "RGB":
                 self.image = self.image.convert("RGB")
         except IOError:
-            raise IOError, "IMAGE_NOT_LOADED"
+            raise IOError("IMAGE_NOT_LOADED")
         
         (self.width, self.height) = self.image.size
         rawpixels = self.image.getdata()
-        self.pixels = [[Pixel(x,y,colors.rgb_to_hex(rawpixels[y*(self.width)+x])) for y in xrange(self.height)] for x in xrange(self.width)]
+        self.pixels = [[Pixel(x,y,colors.rgb_to_hex(rawpixels[y*(self.width)+x])) for y in range(self.height)] for x in range(self.width)]
         self.current_pixel = self.pixels[0][0]
         
     def find_color_blocks(self):
         """Uses the connected component algorithm to build the program color blocks."""
         next_label = 0
         #Pass 1
-        for y in xrange(self.height):
-            for x in xrange(self.width):
+        for y in range(self.height):
+            for x in range(self.width):
                 pixel = self.pixels[x][y]
                 if not self.is_background(pixel.color):
                     neighbours = self.neighbours(pixel)
@@ -125,20 +125,20 @@ class Interpreter(object):
                             unionfind.union(n,pixel)
         
         #Pass 2
-        for y in xrange(self.height):
-            for x in xrange(self.width):
+        for y in range(self.height):
+            for x in range(self.width):
                 pixel = self.pixels[x][y]
                 if not self.is_background(pixel.color):
                     root = unionfind.find(pixel)
                     pixel.set_size = root.set_size
                     pixel.set_label = root.set_label
                     #Build color block object
-                    if not self.color_blocks.has_key(pixel.set_label):
+                    if pixel.set_label not in self.color_blocks:
                         self.color_blocks[pixel.set_label] = ColorBlock(pixel.set_size)
                     self.color_blocks[pixel.set_label].update_boundaries(pixel)
     
         #Debug
-        for i,color_block in self.color_blocks.items():
+        for i,color_block in list(self.color_blocks.items()):
             bounds = color_block.boundary_pixels
             self.debug.writeln("Color Block %s: Size=%s, \n\tmaxRL=(%s,%s), maxRR=(%s,%s), \n\tmaxDL=(%s,%s), maxDR=(%s,%s), \n\tmaxLL=(%s,%s), maxLR=(%s,%s), \n\tmaxUL=(%s,%s), maxUR=(%s,%s)" \
                 % (i, color_block.size, 
@@ -179,11 +179,13 @@ class Interpreter(object):
             while not self.finished:
                 self.do_next_step()
         else:
-            for i in xrange(self.max_steps):
+            for i in range(self.max_steps):
                 self.do_next_step()
                 if self.finished:
-                    return
+                    break
             self.debug.writeln("---EXECUTION FINISHED (Max Steps Reached)---")
+        print("\n")
+        sys.stdout.flush()
             
     def do_next_debug_step(self):
         if self.max_steps == -1:
@@ -412,7 +414,7 @@ class Interpreter(object):
             num_rolls = self.stack.pop()
             depth = self.stack.pop()    
             if depth >0:
-                for i in xrange(abs(num_rolls)):
+                for i in range(abs(num_rolls)):
                     self.roll(depth,num_rolls<0)    
     
     def roll(self,depth,reverse):
@@ -423,13 +425,13 @@ class Interpreter(object):
         if reverse:
             bottom_item = self.stack[0]
             index = depth
-            for i in xrange(index):
+            for i in range(index):
                 self.stack[i] = self.stack[i+1]
             self.stack[index] = bottom_item
         else:
             top_item = self.stack[-1]
             index = len(self.stack)-depth
-            for i in xrange(len(self.stack)-1,index,-1):
+            for i in range(len(self.stack)-1,index,-1):
                 self.stack[i] = self.stack[i-1]    
             self.stack[index] = top_item
     
@@ -462,7 +464,7 @@ class Interpreter(object):
         """Piet Switch operation."""
         if len(self.stack) >=1:
             item = self.stack.pop()
-            for i in xrange(item):
+            for i in range(item):
                 self.toggle_cc()
     
     def op_in_number(self):
@@ -487,7 +489,7 @@ class ColorBlock(object):
         """Initializes new ColorBlock."""
         self.size = size
         #boundary_pixels = [[DPR_CCL,DPR_CCR],[DPD_CCL,DPD,CCR] ... etc.
-        self.boundary_pixels = [[None,None] for i in xrange(4)]
+        self.boundary_pixels = [[None,None] for i in range(4)]
         
     def update_boundaries(self,pixel):
         """Updates the boundary pixels of the current color block given a new pixel."""
@@ -556,19 +558,21 @@ class ErrorHandler(object):
 
 def print_usage():
     """Prints usage string for command line."""
-    print "Piedit v0.0.1 - Python Piet IDE\n"
-    print "Usage: interpreter.py [<options>] <filename>"
-    print "options:"
-    print "\t-h (--help)\t- Prints this help"
-    print "\t-d (--debug)\t- Prints debug information"
-    print "\t-m (--maxsteps)\t- Sets maximum steps to execute. This is 10^6 by default. Set to -1 for infinite."
+    print("Piedit v0.0.1 - Python Piet IDE\n")
+    print("Usage: interpreter.py [<options>] <filename>")
+    print("options:")
+    print("\t-h (--help)\t- Prints this help")
+    print("\t-d (--debug)\t- Prints debug information")
+    print("\t-m (--maxsteps)\t- Sets maximum steps to execute. This is 10^6 by default. Set to -1 for infinite.")
+    sys.stdout.flush()
 
 def getopts():
     """Parses the command line options."""
     try:
        return getopt.getopt(sys.argv[1:], "hdm:", ["help","debug","maxsteps="])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
+        sys.stdout.flush()
         print_usage()
         sys.exit(2)
 
@@ -593,4 +597,5 @@ if __name__ == "__main__":
         else:
             print_usage()
     except KeyboardInterrupt:
-        print "\n\nTerminated"
+        print("\n\nTerminated")
+        sys.stdout.flush()

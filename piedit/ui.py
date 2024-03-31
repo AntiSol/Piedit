@@ -177,11 +177,11 @@ class Handlers(object):
             self.set_run_menu(running=False,status="Complete")
     #Help Menu
     def on_helpHelpMenuItem_activate(self,*args):
-        print "Help | Help"
+        print("Help | Help")
         
     def on_helpAboutMenuItem_activate(self,*args):
         """Handler for Help|About menu item"""
-        print "Help About"
+        print("Help About")
         
     #Toolbar
     def on_toolbarNew_clicked(self,*args):
@@ -298,7 +298,7 @@ class UI(object):
         self.height=height
         self.width=width
         self.gladeui.get_widget("programTable").window.clear()
-        self.pixels = [piedit.colors.white for y in xrange(self.height) for x in xrange(self.width)]
+        self.pixels = [piedit.colors.white for y in range(self.height) for x in range(self.width)]
         self.current_pixel=None
         self.set_current_file(None)
         self.set_window_title("Untitled.png")
@@ -406,8 +406,8 @@ class UI(object):
         #Add event boxes to codel color chooser
         self.codelColors = [gtk.EventBox() for color in piedit.colors.all_colors()]
         for (color,(x,y),i) in zip(piedit.colors.all_colors(),
-                   ((x,y) for x in xrange(7) for y in xrange(3)),
-                   xrange(len(self.codelColors))):  
+                   ((x,y) for x in range(7) for y in range(3)),
+                   range(len(self.codelColors))):  
             event_box = self.codelColors[i]
             event_box.set_events(gtk.gdk.BUTTON_PRESS_MASK)
             event_box.visible = True
@@ -436,9 +436,9 @@ class UI(object):
     def draw_program_table(self,x_iter=None,y_iter=None):
         """Draws the program table"""
         if x_iter == None:
-            x_iter = xrange(self.width)
+            x_iter = range(self.width)
         if y_iter == None:
-            y_iter = xrange(self.height)
+            y_iter = range(self.height)
         program_table = self.gladeui.get_widget("programTable").window
         pt_width, pt_height = program_table.get_size()
         pt_width, pt_height = pt_width-1, pt_height-1
@@ -491,20 +491,20 @@ class UI(object):
         self.draw_program_table([x],[y])
     
     def increase_width(self):
-        for i,y in enumerate(xrange(self.height)):
+        for i,y in enumerate(range(self.height)):
             self.pixels.insert((y*self.width+i)+self.width,piedit.colors.white)
         self.width = self.width+1
         self.draw_program_table()
     
     def decrease_width(self):
         if self.width > 1:
-            for i,y in enumerate(xrange(self.height)):
+            for i,y in enumerate(range(self.height)):
                 del self.pixels[(y*self.width)+self.width-1-i]
             self.width = self.width-1
             self.draw_program_table()
 
     def increase_height(self):
-        self.pixels.extend([piedit.colors.white for x in xrange(self.width)])
+        self.pixels.extend([piedit.colors.white for x in range(self.width)])
         self.height = self.height+1
         self.draw_program_table()
     

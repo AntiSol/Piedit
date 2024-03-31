@@ -6,9 +6,9 @@ imported and used by the GUI"""
 import sys
 import gtk
 import PIL.Image
-import colors
-import unionfind
-import getchr
+from . import colors
+from . import unionfind
+from . import getchr
 
 __author__ = "Steven Anderson"
 __copyright__ = "Steven Anderson 2008"
@@ -21,7 +21,7 @@ __status__ = "Production"
 
 def print_usage():
     """Prints usage string for command line"""
-    print "Usage: interpreter.py image"
+    print("Usage: interpreter.py image")
         
 
 class Interpreter(object):
@@ -61,9 +61,9 @@ class Interpreter(object):
     
     def run_program(self,path):
         """Runs a program at the given path"""
-        print "Loading image"
+        print("Loading image")
         self.load_image(path)   
-        print "Starting execution"
+        print("Starting execution")
         self.start_execution()
         
     def load_image(self,path):
@@ -73,7 +73,7 @@ class Interpreter(object):
             if self.image.mode != "RGB":
                 self.image = self.image.convert("RGB")
         except IOError:
-            raise IOError, "IMAGE_NOT_LOADED"
+            raise IOError("IMAGE_NOT_LOADED")
         
         (self.width, self.height) = self.image.size
         rawpixels = self.image.getdata()
@@ -269,7 +269,7 @@ class Interpreter(object):
     
     def stop_execution(self):
         """Cancels execution of the program"""
-        print "\nExecution finished"
+        print("\nExecution finished")
         sys.exit(1)
         
     def toggle_cc(self):

@@ -38,7 +38,8 @@ class GuiThread(threading.Thread):
         gtk.main()
         
 def key_interrupt(num,frame):
-    print "Termieffnated"
+    print("Termieffnated")
+    sys.stdout.flush()
     raise SystemExit
 
 if __name__ == "__main__":

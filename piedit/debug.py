@@ -1,3 +1,5 @@
+import sys
+
 class Debug(object):
 
     def __init__(self, doit):
@@ -5,4 +7,6 @@ class Debug(object):
 
     def writeln(self,msg=''):
         if self.doit:
-            print msg
+            print(msg)
+            sys.stdout.flush()
+

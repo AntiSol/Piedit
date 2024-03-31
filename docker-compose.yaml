@@ -4,6 +4,7 @@ services:
   app:
     image: piedit:latest
     build: .
+    tty: true
     environment:
       - DISPLAY=${DISPLAY}
     volumes:
