@@ -11,8 +11,18 @@ Features
     * Step through/run programs in the UI
     * There seemed like a lot more features when I was writing it! 
 
-Requirements
+Program Requirements
 
-    * Python (with PIL)
+    * Python2 (with PIL)
     * GTK+ 2.0
     * PyGTK bindings 
+
+Running in docker:
+
+Python2 is no longer supported, and pygtk (gtk2) is not supported in python3, so it would seem that the best
+ way to run piedit on a modern system is via docker. This repo contains scripts to allow that.
+
+To run, simply ensure you have docker installer and use ./run.sh to build and start the program.
+
+
+
