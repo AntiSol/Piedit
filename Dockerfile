@@ -12,6 +12,6 @@ RUN apt-get update && apt-get install -y python2.7 python-gtk2 python-glade2 pyt
 WORKDIR /piedit
 ADD . /piedit
 
-CMD [ "python","piedit.py" ]
+CMD [ "python","-u", "piedit.py" ]
 #CMD [ "sleep", "6000" ]
 
